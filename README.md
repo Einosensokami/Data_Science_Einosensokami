@@ -1,4 +1,4 @@
-# 資料科學期中報告：第 1～6、17 題
+# 資料科學期中報告：第 1～6、8、17 題
 
 各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，CSV 會產生在對應題目的資料夾內。
 
@@ -18,7 +18,8 @@ python -m pip install -r requirements.txt
 4. `第4題_博客來書籍`：博客來「演算法」書籍資料，輸出 `booklist.csv`
 5. `第5題_電影票房排行榜`：開眼電影網台北週末票房，輸出 `Taipei_movies.csv`
 6. `第6題_NBA球隊運動員`：CLE、HOU、GSW 的 2023–24 球季球員資料，輸出 `players.csv`
-7. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
+7. `第8題_近期上映強片`：開眼電影網近期上映推薦，輸出 `movies.csv`
+8. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 各題可在對應資料夾內執行：
 
@@ -85,6 +86,18 @@ CSV 欄位為：球隊、背號、姓名、位置、體重、生日、經驗、�
 - 背號保留原文（例如 `00` 或同季多個背號）；若使用 Excel，請將背號欄以文字匯入以保留前導零。
 - 輸出檔名為 `players.csv`，採 UTF-8 BOM 編碼。
 - 三隊全部抓取成功後才輸出；連線失敗或找不到表格時停止，保留既有 CSV。
+
+## 第 8 題：近期上映強片
+
+使用 requests 與 BeautifulSoup，抓取開眼電影網[近期上映頁面](https://www.atmovies.com.tw/movie/next/)中「近期上映推薦」的全部電影。這是題目本週新片頁導覽列中的「近期上映」入口；依補充筆記，以目前的推薦區塊對應題目「近期上映強片」。範圍為推薦清單，不包含各週完整上映名單或側欄下拉選單。
+
+在專案根目錄執行：
+
+```powershell
+.venv/Scripts/python.exe "第8題_近期上映強片/main.py"
+```
+
+程式逐筆列印名稱、上映時間及完整連結網址，並存至該題資料夾的 `movies.csv`。日期統一為 `YYYY/MM/DD`，CSV 使用 UTF-8 BOM，方便 Excel 顯示中文。上映日期依網站公告保留，不自行限制日期範圍；網站連線失敗、清單為空或必要欄位缺漏時，停止並保留既有 CSV。
 
 ## 第 17 題：GitHub 網頁資料
 
