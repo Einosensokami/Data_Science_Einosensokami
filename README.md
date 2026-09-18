@@ -21,10 +21,14 @@ python -m pip install -r requirements.txt
 7. `第8題_近期上映強片`：開眼電影網近期上映推薦，輸出 `movies.csv`
 8. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
-各題可在對應資料夾內執行：
+第 1～5 題可在專案根目錄執行對應指令：
 
-```bash
-python main.py
+```powershell
+.venv/Scripts/python.exe "第1題_本週新片/main.py"
+.venv/Scripts/python.exe "第2題_台銀牌價/main.py"
+.venv/Scripts/python.exe "第3題_腸病毒資料/main.py"
+.venv/Scripts/python.exe "第4題_博客來書籍/main.py"
+.venv/Scripts/python.exe "第5題_電影票房排行榜/main.py"
 ```
 
 ## 第 4 題：博客來書籍資料
@@ -38,10 +42,10 @@ python main.py
 - 作者
 - 書價
 
-在第 4 題資料夾內執行：
+在專案根目錄執行：
 
-```bash
-python main.py
+```powershell
+.venv/Scripts/python.exe "第4題_博客來書籍/main.py"
 ```
 
 執行時可看到每一頁各自開啟及關閉 Chrome。遇到下列情況時會停止：
@@ -63,10 +67,10 @@ python main.py
 
 CSV 欄位為：排名、片名、本週票房、累計票房。
 
-在第 5 題資料夾內執行：
+在專案根目錄執行：
 
-```bash
-python main.py
+```powershell
+.venv/Scripts/python.exe "第5題_電影票房排行榜/main.py"
 ```
 
 ## 第 6 題：NBA 球隊運動員資料
