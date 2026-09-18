@@ -1,4 +1,4 @@
-# 資料科學期中報告：第 1～5 題
+# 資料科學期中報告：第 1～5、17 題
 
 各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，CSV 會產生在對應題目的資料夾內。
 
@@ -17,6 +17,7 @@ python -m pip install -r requirements.txt
 3. `第3題_腸病毒資料`：政府資料開放平臺腸病毒資料，輸出 `NHI_EnteroviralInfection.csv`
 4. `第4題_博客來書籍`：博客來「演算法」書籍資料，輸出 `booklist.csv`
 5. `第5題_電影票房排行榜`：開眼電影網台北週末票房，輸出 `Taipei_movies.csv`
+6. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 各題可在對應資料夾內執行：
 
@@ -65,3 +66,31 @@ CSV 欄位為：排名、片名、本週票房、累計票房。
 ```bash
 python main.py
 ```
+
+## 第 17 題：GitHub 網頁資料
+
+在專案根目錄執行：
+
+```powershell
+.venv/Scripts/python.exe "第17題_GitHub網頁資料/main.py"
+```
+
+依提示輸入 GitHub 帳號與密碼（密碼輸入時會顯示，方便核對）。也可事先設定 `GITHUB_USERNAME`、`GITHUB_PASSWORD` 環境變數。程式會開啟可見 Chrome，自動填入登入表單並按下 Sign in；表單中的隱藏 `authenticity_token` 由瀏覽器正常提交，無須自行取得或硬編碼。
+
+若出現二階段驗證、裝置驗證或其他互動驗證，請在瀏覽器內完成，程式最多等待 5 分鐘。GitHub 的驗證流程見[官方說明](https://docs.github.com/en/authentication/securing-your-account-and-data-secure/verifying-new-devices-when-signing-in)。
+
+原始 PDF 第 11 頁指定的兩個紅框為：
+
+| 視窗 | 標題 | 擷取內容 |
+| --- | --- | --- |
+| 1 | Create your first project | 左側建立第一個專案的說明文字 |
+| 2 | Updates to your homepage feed | 中央首頁動態更新公告的說明文字 |
+
+登入後程式擷取這兩個區塊的標題與段落、列印結果，並在第 17 題資料夾產生：
+
+- `github_windows.csv`：視窗、標題、內容、頁面網址、狀態，採 UTF-8 BOM 編碼供 Excel 開啟。
+- `github_dashboard.png`：登入後目前畫面的截圖，供比對題目與報告使用。
+
+題目截圖是舊版首頁；GitHub 已有[新版首頁配置](https://github.blog/changelog/2025-10-28-home-dashboard-update-in-public-preview/)，且既有專案的帳號不一定會看到第一個專案提示。程式找不到指定區塊時，會將 CSV 狀態標為「未顯示」、內容留空；只有找到標題時則標為「找到標題但無法解析內容」。這兩種狀態都不代表已完成該紅框擷取，需依截圖與老師確認是否接受目前頁面的替代區塊。
+
+程式不儲存密碼、Cookie 或原始登入 HTML。CSV 與截圖可能含個人資料，已加入 `.gitignore`。執行需要已安裝 Chrome；Selenium 會管理對應的 WebDriver。
