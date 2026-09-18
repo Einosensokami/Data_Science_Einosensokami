@@ -25,10 +25,11 @@ dist/
 .eggs/
 pip-wheel-metadata/
 
-# Local environment and editor files
+# Local environment, Claude Code, and editor files
 .env
 .env.*
 !.env.example
+.claude/
 .idea/
 .vscode/
 
@@ -41,3 +42,4 @@ Desktop.ini
 第1題_本週新片/movies.csv
 第2題_台銀牌價/bank.csv
 第3題_腸病毒資料/NHI_EnteroviralInfection.csv
+第4題_博客來書籍/booklist.csv
