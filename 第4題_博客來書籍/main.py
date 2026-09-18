@@ -25,7 +25,7 @@ URL_TEMPLATE = (
 )
 OUTPUT = Path(__file__).with_name("booklist.csv")
 WAIT_SECONDS = 20
-MAX_PAGES = 50
+MAX_PAGES = 50  # 僅供 scrape_legacy 相容保留；正式流程會讀取網站總頁數。
 ERROR_PAGE_MARKERS = ("Connection is temporarily unavailable", "連線暫時異常")
 
 PRODUCT_SELECTOR = "div[id^='prod-itemlist-']:not([id^='prod-itemlist-footer-'])"
@@ -138,6 +138,23 @@ def parse_search_page(html: str | bytes) -> list[dict[str, str]]:
     return rows
 
 
+def parse_total_pages(html: str | bytes) -> int:
+    """Read the last page number from the search-results summary."""
+    soup = BeautifulSoup(html, "html.parser")
+    for paragraph in soup.find_all("p"):
+        text = clean(paragraph.get_text(" ", strip=True))
+        match = re.search(
+            r"搜尋結果共\s*[\d,]+\s*筆\s*[,，]?\s*頁數\s*\d+\s*/\s*(\d+)",
+            text,
+        )
+        if match:
+            total_pages = int(match.group(1))
+            if total_pages > 0:
+                return total_pages
+
+    raise RuntimeError("找不到搜尋結果的總頁數，博客來的搜尋結果版面可能已變更。")
+
+
 def page_is_blocked(driver: webdriver.Chrome) -> bool:
     """檢查是否被網站暫時阻擋。"""
     try:
@@ -180,7 +197,7 @@ def wait_for_products(
     raise RuntimeError("等待搜尋結果逾時，頁面未載入書籍。")
 
 
-def scrape() -> list[dict[str, str]]:
+def scrape_legacy() -> list[dict[str, str]]:
     """每一頁重開可見 Chrome，依頁碼網址逐頁載入搜尋結果。"""
     options = Options()
     options.add_argument("--lang=zh-TW")
@@ -238,6 +255,49 @@ def scrape() -> list[dict[str, str]]:
         time.sleep(random.uniform(2, 4))
     else:
         raise RuntimeError(f"已達最大頁數上限 ({MAX_PAGES})，停止以避免無限迴圈。")
+
+    return rows
+
+
+def scrape() -> list[dict[str, str]]:
+    """抓取第一頁的總頁數，再依該頁數逐頁抓取。"""
+    options = Options()
+    options.add_argument("--lang=zh-TW")
+    options.add_argument("--window-size=1440,1000")
+
+    rows: list[dict[str, str]] = []
+    seen_urls: set[str] = set()
+    page = 1
+    total_pages: int | None = None
+
+    while total_pages is None or page <= total_pages:
+        page_url = URL_TEMPLATE.format(page=page, keyword=quote(KEYWORD))
+        print(f"正在抓取第 {page} 頁：{page_url}")
+        driver = webdriver.Chrome(options=options)
+        try:
+            driver.get(page_url)
+            wait_for_products(driver)
+            html = driver.page_source
+            page_rows = parse_search_page(html)
+            if total_pages is None:
+                total_pages = parse_total_pages(html)
+                print(f"搜尋結果共有 {total_pages} 頁，將依此頁數抓取。")
+        finally:
+            driver.quit()
+
+        new_count = 0
+        for row in page_rows:
+            product_page_url = row["網址"]
+            if product_page_url in seen_urls:
+                continue
+            seen_urls.add(product_page_url)
+            rows.append(row)
+            new_count += 1
+
+        print(f"第 {page}/{total_pages} 頁：新增 {new_count} 筆，累計 {len(rows)} 筆。")
+        page += 1
+        if page <= total_pages:
+            time.sleep(random.uniform(2, 4))
 
     return rows
 
