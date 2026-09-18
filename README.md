@@ -21,14 +21,12 @@ python -m pip install -r requirements.txt
 7. `第8題_近期上映強片`：開眼電影網近期上映推薦，輸出 `movies.csv`
 8. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
-第 1～5 題可在專案根目錄執行對應指令：
+第 1～3 題可在專案根目錄執行對應指令：
 
 ```powershell
-.venv/Scripts/python.exe "第1題_本週新片/main.py"
-.venv/Scripts/python.exe "第2題_台銀牌價/main.py"
-.venv/Scripts/python.exe "第3題_腸病毒資料/main.py"
-.venv/Scripts/python.exe "第4題_博客來書籍/main.py"
-.venv/Scripts/python.exe "第5題_電影票房排行榜/main.py"
+python "第1題_本週新片/main.py"
+python "第2題_台銀牌價/main.py"
+python "第3題_腸病毒資料/main.py"
 ```
 
 ## 第 4 題：博客來書籍資料
@@ -45,7 +43,7 @@ python -m pip install -r requirements.txt
 在專案根目錄執行：
 
 ```powershell
-.venv/Scripts/python.exe "第4題_博客來書籍/main.py"
+python "第4題_博客來書籍/main.py"
 ```
 
 執行時可看到每一頁各自開啟及關閉 Chrome。遇到下列情況時會停止：
@@ -70,7 +68,7 @@ CSV 欄位為：排名、片名、本週票房、累計票房。
 在專案根目錄執行：
 
 ```powershell
-.venv/Scripts/python.exe "第5題_電影票房排行榜/main.py"
+python "第5題_電影票房排行榜/main.py"
 ```
 
 ## 第 6 題：NBA 球隊運動員資料
@@ -80,7 +78,7 @@ CSV 欄位為：排名、片名、本週票房、累計票房。
 在專案根目錄執行：
 
 ```powershell
-.venv/Scripts/python.exe "第6題_NBA球隊運動員/main.py"
+python "第6題_NBA球隊運動員/main.py"
 ```
 
 CSV 欄位為：球隊、背號、姓名、位置、體重、生日、經驗、大學。
@@ -98,7 +96,7 @@ CSV 欄位為：球隊、背號、姓名、位置、體重、生日、經驗、�
 在專案根目錄執行：
 
 ```powershell
-.venv/Scripts/python.exe "第8題_近期上映強片/main.py"
+python "第8題_近期上映強片/main.py"
 ```
 
 程式逐筆列印名稱、上映時間及完整連結網址，並存至該題資料夾的 `movies.csv`。日期統一為 `YYYY/MM/DD`，CSV 使用 UTF-8 BOM，方便 Excel 顯示中文。上映日期依網站公告保留，不自行限制日期範圍；網站連線失敗、清單為空或必要欄位缺漏時，停止並保留既有 CSV。
@@ -108,7 +106,7 @@ CSV 欄位為：球隊、背號、姓名、位置、體重、生日、經驗、�
 在專案根目錄執行：
 
 ```powershell
-.venv/Scripts/python.exe "第17題_GitHub網頁資料/main.py"
+python "第17題_GitHub網頁資料/main.py"
 ```
 
 依提示輸入 GitHub 帳號與密碼（密碼輸入時會顯示，方便核對）。也可事先設定 `GITHUB_USERNAME`、`GITHUB_PASSWORD` 環境變數。程式會開啟可見 Chrome，自動填入登入表單並按下 Sign in；表單中的隱藏 `authenticity_token` 由瀏覽器正常提交，無須自行取得或硬編碼。
