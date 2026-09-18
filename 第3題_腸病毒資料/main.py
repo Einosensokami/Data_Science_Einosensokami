@@ -6,7 +6,13 @@ import csv
 import io
 from pathlib import Path
 
-import requests
+import truststore
+
+
+# 使用 Windows 系統憑證庫，避免校園/公司網路的合法 HTTPS 憑證被 certifi 誤判。
+truststore.inject_into_ssl()
+
+import requests  # noqa: E402
 
 
 URL = "https://od.cdc.gov.tw/eic/NHI_EnteroviralInfection.csv"
