@@ -1,4 +1,4 @@
-# 資料科學期中報告：第 1～5、17 題
+# 資料科學期中報告：第 1～6、17 題
 
 各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，CSV 會產生在對應題目的資料夾內。
 
@@ -17,7 +17,8 @@ python -m pip install -r requirements.txt
 3. `第3題_腸病毒資料`：政府資料開放平臺腸病毒資料，輸出 `NHI_EnteroviralInfection.csv`
 4. `第4題_博客來書籍`：博客來「演算法」書籍資料，輸出 `booklist.csv`
 5. `第5題_電影票房排行榜`：開眼電影網台北週末票房，輸出 `Taipei_movies.csv`
-6. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
+6. `第6題_NBA球隊運動員`：CLE、HOU、GSW 的 2023–24 球季球員資料，輸出 `players.csv`
+7. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 各題可在對應資料夾內執行：
 
@@ -66,6 +67,24 @@ CSV 欄位為：排名、片名、本週票房、累計票房。
 ```bash
 python main.py
 ```
+
+## 第 6 題：NBA 球隊運動員資料
+
+使用 requests 抓取 Basketball Reference 三隊的 `2024.html`，再以 BeautifulSoup 解析「Roster and Stats」頁面的 Roster 球員名單。網址中的 2024 指 2023–24 球季。
+
+在專案根目錄執行：
+
+```powershell
+.venv/Scripts/python.exe "第6題_NBA球隊運動員/main.py"
+```
+
+CSV 欄位為：球隊、背號、姓名、位置、體重、生日、經驗、大學。
+
+- 球隊使用 `CLE`、`HOU`、`GSW` 代碼；體重保留網站的磅（lb）單位。
+- 經驗為該球季開始前的 NBA/ABA 年資，`R` 表示新人；網站沒有大學資料時保留空白。
+- 背號保留原文（例如 `00` 或同季多個背號）；若使用 Excel，請將背號欄以文字匯入以保留前導零。
+- 輸出檔名為 `players.csv`，採 UTF-8 BOM 編碼。
+- 三隊全部抓取成功後才輸出；連線失敗或找不到表格時停止，保留既有 CSV。
 
 ## 第 17 題：GitHub 網頁資料
 
