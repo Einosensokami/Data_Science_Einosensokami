@@ -43,3 +43,8 @@ Desktop.ini
 第2題_台銀牌價/bank.csv
 第3題_腸病毒資料/NHI_EnteroviralInfection.csv
 第4題_博客來書籍/booklist.csv
+第5題_電影票房排行榜/Taipei_movies.csv
+
+# Temporary Selenium command output
+run.out
+run.err
