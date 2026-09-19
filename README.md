@@ -1,4 +1,4 @@
-# 資料科學期中報告：第 1～6、8、9、17 題
+# 資料科學期中報告：第 1～6、8～11、17 題
 
 各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，CSV 會產生在對應題目的資料夾內。
 
@@ -20,7 +20,9 @@ python -m pip install -r requirements.txt
 6. `第6題_NBA球隊運動員`：CLE、HOU、GSW 的 2023–24 球季球員資料，輸出 `players.csv`
 7. `第8題_近期上映強片`：開眼電影網近期上映推薦，輸出 `movies.csv`
 8. `第9題_Google新聞`：Selenium 抓取 Google 新聞首頁各分類標題，輸出 `google_news.csv` 與 `google_news.txt`
-9. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
+9. `第10題_PTT八卦板`：Selenium 點選成年確認，列出網頁 title 與文章列表，輸出 `gossiping.csv` 與 `gossiping.txt`
+10. `第11題_NBA商品資料`：Selenium 操作商品分頁，逐頁輸出 `NBA_Products1.csv` 至 `NBA_ProductsN.csv`
+11. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 第 1～3 題可在專案根目錄執行對應指令：
 
@@ -117,6 +119,34 @@ python "第9題_Google新聞/main.py"
 需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器，加入 `--headless` 可在背景執行。程式依區塊標題定位，不依賴新聞的固定筆數；每個分類內依網址去重，同一則新聞若屬於不同分類會分別保留。
 
 輸出至該題資料夾：`google_news.csv`（分類、標題、網址）與 `google_news.txt`（網頁標題及分類新聞清單），均採 UTF-8 BOM 編碼。抓取範圍是本次首頁載入的各區塊，不包含點入分類後的其他頁面或整個新聞資料庫。地方新聞依網站偵測地區而異，個人化及版面也可能影響內容；缺少分類時會明確提示「部分完成」，不將其他分類的新聞冒充缺少的內容。連線失敗或完全無法解析時保留既有輸出。
+
+## 第 10 題：PTT Gossiping
+
+使用 Selenium 開啟 [PTT 八卦板](https://www.ptt.cc/bbs/Gossiping/index.html)，點選「我同意，我已年滿十八歲」的進入按鈕，並確認網站已設定 `over18=1` Cookie。進入後列印實際網頁 title，以及本頁每篇文章的網址、標題、作者。
+
+```powershell
+python "第10題_PTT八卦板/main.py"
+```
+
+需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器，加入 `--headless` 可在背景執行。
+
+抓取範圍為目前索引頁，包含置底公告；已刪除且沒有連結的文章會略過。網址輸出為 `https://www.ptt.cc/bbs/Gossiping/...` 完整網址，可直接貼到 Chrome 開啟；首次開啟時可能需要點選成年確認。網頁 title 保留網站原文，可能包含看板名稱。
+
+輸出至該題資料夾：`gossiping.csv`（網址、標題、作者）與 `gossiping.txt`（網頁標題及逐篇文章清單），均使用 UTF-8 BOM 編碼。每次執行抓取當時的文章；分級確認失敗、連線失敗或無法解析文章時，停止並保留既有輸出。
+
+## 第 11 題：NBA 商品資料
+
+使用 Selenium 開啟 [NBA 商品資料頁](https://fchart.github.io/ML/nba_items.html)，讀取目前表格後操作「下一頁」，直到最後一頁。程式依頁面實際產生的分頁按鈕判斷頁數，不將頁數寫死。
+
+```powershell
+python "第11題_NBA商品資料/main.py"
+```
+
+需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器，加入 `--headless` 可在背景執行。
+
+每頁分別輸出 `NBA_Products1.csv`、`NBA_Products2.csv`，依此類推；欄位為商品編號、商品名稱、價格。每完成一個檔案會列印 `儲存頁面: 頁碼`。CSV 使用 UTF-8 BOM 編碼，可直接以 Excel 開啟而不會出現中文亂碼。
+
+程式先成功收集全部頁面，才覆蓋輸出檔；若連線、分頁切換或資料結構發生錯誤，會停止並保留既有 CSV。本次頁數少於上次執行時，也會刪除已不屬於目前資料的較高頁碼輸出檔。
 
 ## 第 17 題：GitHub 網頁資料
 
