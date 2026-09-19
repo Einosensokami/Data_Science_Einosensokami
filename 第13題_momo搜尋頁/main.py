@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -19,8 +20,7 @@ URL = "https://www.momoshop.com.tw/main/Main.jsp"
 KEYWORD = "nba"
 OUTPUT = Path(__file__).with_name("NBA_test.html")
 SEARCH_INPUT = '[data-testid="header-search-input"]'
-SEARCH_BUTTON = '[data-testid="header-search-button"]'
-PRODUCT_NAME = ".content-info__goods-name"
+PRODUCT_NAME = "a.prdName"
 
 
 def make_snapshot(html: str, source_url: str) -> tuple[str, int]:
@@ -59,8 +59,7 @@ def scrape(headless: bool = False) -> tuple[str, str, int]:
         driver.get(URL)
         search = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, SEARCH_INPUT)))
         search.clear()
-        search.send_keys(KEYWORD)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, SEARCH_BUTTON))).click()
+        search.send_keys(KEYWORD, Keys.ENTER)
         wait.until(
             lambda browser: unquote(urlsplit(browser.current_url).path).rstrip("/").lower()
             == f"/search/{KEYWORD}"
