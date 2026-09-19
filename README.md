@@ -1,6 +1,6 @@
-# 資料科學期中報告：第 1～6、8～12、17 題
+# 資料科學期中報告：第 1～6、8～13、17 題
 
-各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，CSV 會產生在對應題目的資料夾內。
+各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，輸出檔會產生在對應題目的資料夾內。
 
 ## 安裝套件
 
@@ -23,7 +23,8 @@ python -m pip install -r requirements.txt
 9. `第10題_PTT八卦板`：Selenium 點選成年確認，列出網頁 title 與文章列表，輸出 `gossiping.csv` 與 `gossiping.txt`
 10. `第11題_NBA商品資料`：Selenium 操作商品分頁，逐頁輸出 `NBA_Products1.csv` 至 `NBA_ProductsN.csv`
 11. `第12題_Steam遊戲推薦`：Selenium 操作 Google 搜尋「Steam 遊戲推薦」，輸出 `steam_games.csv`
-12. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
+12. `第13題_momo搜尋頁`：Selenium 自動在 momo 搜尋「nba」，輸出 `NBA_test.html`
+13. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 第 1～3 題可在專案根目錄執行對應指令：
 
@@ -160,6 +161,18 @@ python "第12題_Steam遊戲推薦/main.py"
 需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器；若 Google 顯示真人驗證，請在 Chrome 視窗中手動完成，程式最多等待 5 分鐘後繼續擷取。加入 `--headless` 可在背景執行，但遇到真人驗證時會停止並提示改用可見模式。
 
 CSV 欄位為「標題、網址」，使用 UTF-8 BOM 編碼，方便 Excel 顯示中文。網址為可直接開啟的 HTTP(S) 連結；Google `/url` 轉址會取出查詢參數中的目標網址，`/goto` 轉址則以 requests 讀取 HTTP Location。搜尋輸入及結果擷取均由 Selenium 完成。範圍為第一頁搜尋結果，不包含其他分頁；搜尋結果會隨時間、地區與 Google 版面改變。連線失敗、驗證逾時、轉址解析失敗或沒有有效結果時，不覆蓋既有 CSV。
+
+## 第 13 題：momo 搜尋頁
+
+使用 Selenium 開啟 momo 首頁，自動在搜尋框輸入 `nba` 並點選「搜尋」。等待搜尋結果的商品出現後，將第一頁已渲染的 HTML 存為 `第13題_momo搜尋頁/NBA_test.html`。
+
+```powershell
+python "第13題_momo搜尋頁/main.py"
+```
+
+需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器，加入 `--headless` 可在背景執行。程式會列印搜尋結果網址及本頁商品筆數；搜尋失敗、逾時或商品尚未載入時，不覆蓋既有 HTML。
+
+`NBA_test.html` 採 UTF-8 編碼，可用 Chrome 開啟。保存的是當次第一頁的靜態畫面，會移除動態腳本以避免本機開啟時重新渲染，並加入原始網址作為相對路徑的基準。商品文字保留在 HTML 內，樣式及圖片仍需網路載入；搜尋、分頁等互動功能請使用原始網站。
 
 ## 第 17 題：GitHub 網頁資料
 
