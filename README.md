@@ -1,4 +1,4 @@
-# 資料科學期中報告：第 1～6、8～11、17 題
+# 資料科學期中報告：第 1～6、8～12、17 題
 
 各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，CSV 會產生在對應題目的資料夾內。
 
@@ -22,7 +22,8 @@ python -m pip install -r requirements.txt
 8. `第9題_Google新聞`：Selenium 抓取 Google 新聞首頁各分類標題，輸出 `google_news.csv` 與 `google_news.txt`
 9. `第10題_PTT八卦板`：Selenium 點選成年確認，列出網頁 title 與文章列表，輸出 `gossiping.csv` 與 `gossiping.txt`
 10. `第11題_NBA商品資料`：Selenium 操作商品分頁，逐頁輸出 `NBA_Products1.csv` 至 `NBA_ProductsN.csv`
-11. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
+11. `第12題_Steam遊戲推薦`：Selenium 操作 Google 搜尋「Steam 遊戲推薦」，輸出 `steam_games.csv`
+12. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 第 1～3 題可在專案根目錄執行對應指令：
 
@@ -147,6 +148,18 @@ python "第11題_NBA商品資料/main.py"
 每頁分別輸出 `NBA_Products1.csv`、`NBA_Products2.csv`，依此類推；欄位為商品編號、商品名稱、價格。每完成一個檔案會列印 `儲存頁面: 頁碼`。CSV 使用 UTF-8 BOM 編碼，可直接以 Excel 開啟而不會出現中文亂碼。
 
 程式先成功收集全部頁面，才覆蓋輸出檔；若連線、分頁切換或資料結構發生錯誤，會停止並保留既有 CSV。本次頁數少於上次執行時，也會刪除已不屬於目前資料的較高頁碼輸出檔。
+
+## 第 12 題：Steam 遊戲推薦
+
+使用 Selenium 與 WebDriver 開啟 Google 首頁，在搜尋框自動輸入「Steam 遊戲推薦」並送出，列印第一頁搜尋區中的結果標題及完整連結，依網址去重後存成 `第12題_Steam遊戲推薦/steam_games.csv`。
+
+```powershell
+python "第12題_Steam遊戲推薦/main.py"
+```
+
+需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器；若 Google 顯示真人驗證，請在 Chrome 視窗中手動完成，程式最多等待 5 分鐘後繼續擷取。加入 `--headless` 可在背景執行，但遇到真人驗證時會停止並提示改用可見模式。
+
+CSV 欄位為「標題、網址」，使用 UTF-8 BOM 編碼，方便 Excel 顯示中文。網址為可直接開啟的 HTTP(S) 連結；Google `/url` 轉址會取出查詢參數中的目標網址，`/goto` 轉址則以 requests 讀取 HTTP Location。搜尋輸入及結果擷取均由 Selenium 完成。範圍為第一頁搜尋結果，不包含其他分頁；搜尋結果會隨時間、地區與 Google 版面改變。連線失敗、驗證逾時、轉址解析失敗或沒有有效結果時，不覆蓋既有 CSV。
 
 ## 第 17 題：GitHub 網頁資料
 
