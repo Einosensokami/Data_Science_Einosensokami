@@ -1,4 +1,4 @@
-# 資料科學期中報告：第 1～6、8～13、17 題
+# 資料科學期中報告：第 1～6、8～14、17 題
 
 各題各自放在一個資料夾，程式都從網站抓取資料。執行完成後，輸出檔會產生在對應題目的資料夾內。
 
@@ -24,7 +24,8 @@ python -m pip install -r requirements.txt
 10. `第11題_NBA商品資料`：Selenium 操作商品分頁，逐頁輸出 `NBA_Products1.csv` 至 `NBA_ProductsN.csv`
 11. `第12題_Steam遊戲推薦`：Selenium 操作 Google 搜尋「Steam 遊戲推薦」，輸出 `steam_games.csv`
 12. `第13題_momo搜尋頁`：Selenium 自動在 momo 搜尋「nba」，輸出 `NBA_test.html`
-13. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
+13. `第14題_NBA球員薪水`：Selenium 逐頁抓取 HoopsHype 球員薪資，輸出 `highest.csv` 與 `all_play.csv`
+14. `第17題_GitHub網頁資料`：Selenium 自動登入 GitHub，擷取附圖兩個提示區塊，輸出 `github_windows.csv` 與 `github_dashboard.png`
 
 第 1～3 題可在專案根目錄執行對應指令：
 
@@ -164,7 +165,7 @@ CSV 欄位為「標題、網址」，使用 UTF-8 BOM 編碼，方便 Excel 顯�
 
 ## 第 13 題：momo 搜尋頁
 
-使用 Selenium 開啟 momo 首頁，自動在搜尋框輸入 `nba` 並點選「搜尋」。等待搜尋結果的商品出現後，將第一頁已渲染的 HTML 存為 `第13題_momo搜尋頁/NBA_test.html`。
+使用 Selenium 開啟 momo 首頁，自動在搜尋框輸入 `nba` 並按 Enter。等待搜尋結果的商品出現後，將第一頁已渲染的 HTML 存為 `第13題_momo搜尋頁/NBA_test.html`。
 
 ```powershell
 python "第13題_momo搜尋頁/main.py"
@@ -173,6 +174,21 @@ python "第13題_momo搜尋頁/main.py"
 需要已安裝 Chrome；Selenium 自動管理 WebDriver。預設開啟可見瀏覽器，加入 `--headless` 可在背景執行。程式會列印搜尋結果網址及本頁商品筆數；搜尋失敗、逾時或商品尚未載入時，不覆蓋既有 HTML。
 
 `NBA_test.html` 採 UTF-8 編碼，可用 Chrome 開啟。保存的是當次第一頁的靜態畫面，會移除動態腳本以避免本機開啟時重新渲染，並加入原始網址作為相對路徑的基準。商品文字保留在 HTML 內，樣式及圖片仍需網路載入；搜尋、分頁等互動功能請使用原始網站。
+
+## 第 14 題：NBA 球員薪水
+
+使用 Selenium 開啟 [HoopsHype 球員薪資頁](https://hoopshype.com/salaries/players/)，逐一切換表格分頁，並以 BeautifulSoup 解析全部列。再開啟薪資排名前三位球員的個人頁，讀取背號。
+
+```powershell
+python "第14題_NBA球員薪水/main.py"
+```
+
+需要已安裝 Chrome；加入 `--headless` 可在背景執行。輸出均位於第 14 題資料夾，使用 UTF-8 BOM 編碼：
+
+- `highest.csv`：前三位球員的名字、背號及當前顯示球季的薪資。
+- `all_play.csv`：表格各頁的全部列，包含排名、球員與所有顯示的球季薪資欄位。
+
+球季與資料筆數以執行當時網站顯示為準。網站若對同一球員列出多筆不同薪資，`all_play.csv` 會原樣保留；沒有個人頁連結的球員也會保留在表格資料中。抓取失敗時不會覆蓋既有 CSV。
 
 ## 第 17 題：GitHub 網頁資料
 
