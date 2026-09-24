@@ -202,18 +202,18 @@ python "第17題_GitHub網頁資料/main.py"
 
 若出現二階段驗證、裝置驗證或其他互動驗證，請在瀏覽器內完成，程式最多等待 5 分鐘。GitHub 的驗證流程見[官方說明](https://docs.github.com/en/authentication/securing-your-account-and-data-secure/verifying-new-devices-when-signing-in)。
 
-原始 PDF 第 11 頁指定的兩個紅框為：
+登入後首頁目前的主要內容區塊為：
 
-| 視窗 | 標題 | 擷取內容 |
+| 區域 | 標題 | 擷取內容 |
 | --- | --- | --- |
-| 1 | Create your first project | 左側建立第一個專案的說明文字 |
-| 2 | Updates to your homepage feed | 中央首頁動態更新公告的說明文字 |
+| 左欄 | Top repositories | 顯示的 repository 名稱與連結 |
+| 中欄 | Feed | 每筆首頁動態的文字與第一個連結 |
 
-登入後程式擷取這兩個區塊的標題與段落、列印結果，並在第 17 題資料夾產生：
+登入後程式擷取這兩個區塊、列印結果，並在第 17 題資料夾產生：
 
-- `github_windows.csv`：視窗、標題、內容、頁面網址、狀態，採 UTF-8 BOM 編碼供 Excel 開啟。
+- `github_dashboard.csv`：區域、項目、內容、連結、頁面網址、狀態，採 UTF-8 BOM 編碼供 Excel 開啟。
 - `github_dashboard.png`：登入後目前畫面的截圖，供比對題目與報告使用。
 
-題目截圖是舊版首頁；GitHub 已有[新版首頁配置](https://github.blog/changelog/2025-10-28-home-dashboard-update-in-public-preview/)，且既有專案的帳號不一定會看到第一個專案提示。程式找不到指定區塊時，會將 CSV 狀態標為「未顯示」、內容留空；只有找到標題時則標為「找到標題但無法解析內容」。這兩種狀態都不代表已完成該紅框擷取，需依截圖與老師確認是否接受目前頁面的替代區塊。
+GitHub 首頁會依帳號與當下活動而改變。程式找不到左欄或中欄時，會將 CSV 狀態標為「未顯示」；找到標題但沒有資料時則標為「找到標題但無 repository／動態」。
 
 程式不儲存密碼、Cookie 或原始登入 HTML。CSV 與截圖可能含個人資料，已加入 `.gitignore`。執行需要已安裝 Chrome；Selenium 會管理對應的 WebDriver。

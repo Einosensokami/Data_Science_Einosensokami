@@ -1,53 +1,39 @@
-"""離線驗證題目紅框解析；測試資料不是實際 GitHub 擷取結果。"""
-
+"""離線驗證 GitHub 左欄 repository 與中欄 Feed 的解析。"""
+import csv
 import tempfile
 import unittest
 from pathlib import Path
 
-from main import FIELDS, parse_windows, save_csv
+from main import FIELDS, parse_dashboard, save_csv
 
 
-class WindowParsingTests(unittest.TestCase):
-    def test_extracts_only_the_two_cards(self):
+class DashboardParsingTests(unittest.TestCase):
+    def test_extracts_left_repositories_and_middle_feed(self):
         html = """
-        <aside><section><h2>Create your first project</h2>
-          <p>Ready to start building? Create a repository.</p>
-          <a href='/new'>Create repository</a></section><p>Recent activity</p></aside>
-        <main><section><h3>Updates to your <span>homepage feed</span></h3>
-          <p>First paragraph.</p><p>Second paragraph.</p></section>
-          <section><h3>Start writing code</h3><p>Unrelated content</p></section></main>
+        <aside><h2>Top repositories</h2>
+          <a href='/eino/project-a'>eino/project-a</a>
+          <a href='/eino/project-b'>eino/project-b</a><a href='/eino'>Profile</a></aside>
+        <main><section><h2>Feed</h2>
+          <article><a href='/octo/repo/issues/1'>octo opened an issue</a><p>Useful details</p></article>
+          <article><p>A second activity</p></article></section></main>
         """
-        rows = parse_windows(html, "https://github.com/")
-        self.assertEqual([row["狀態"] for row in rows], ["已擷取", "已擷取"])
-        self.assertEqual(rows[0]["內容"], "Ready to start building? Create a repository.")
-        self.assertEqual(rows[1]["內容"], "First paragraph.\nSecond paragraph.")
+        rows = parse_dashboard(html, "https://github.com/")
+        repositories = [row for row in rows if row["區域"] == "左欄 repository"]
+        feed = [row for row in rows if row["區域"] == "中欄 Feed"]
+        self.assertEqual([row["項目"] for row in repositories], ["eino/project-a", "eino/project-b"])
+        self.assertEqual(repositories[0]["連結"], "https://github.com/eino/project-a")
+        self.assertEqual([row["內容"] for row in feed], ["octo opened an issue Useful details", "A second activity"])
 
-    def test_missing_cards_do_not_capture_other_content(self):
-        rows = parse_windows("<main><h1>Home</h1><p>Other feed</p></main>", "https://github.com/")
-        self.assertTrue(all(row["狀態"] == "未顯示" and not row["內容"] for row in rows))
+    def test_missing_sections_are_reported_without_other_content(self):
+        rows = parse_dashboard("<main><h1>Home</h1><p>Other content</p></main>", "https://github.com/")
+        self.assertEqual([row["狀態"] for row in rows], ["未顯示", "未顯示"])
 
-    def test_title_without_body_is_not_success(self):
-        rows = parse_windows(
-            "<aside><h2>Create your first project</h2></aside><main><p>Other content</p></main>",
-            "https://github.com/",
-        )
-        self.assertEqual(rows[0]["狀態"], "找到標題但無法解析內容")
-        self.assertEqual(rows[0]["內容"], "")
-
-    def test_hidden_cards_are_not_reported(self):
-        rows = parse_windows(
-            "<div hidden><h2>Create your first project</h2><p>Hidden content</p></div>",
-            "https://github.com/",
-        )
+    def test_hidden_sections_are_not_reported(self):
+        rows = parse_dashboard("<aside hidden><h2>Top repositories</h2><a href='/a/b'>a/b</a></aside>", "https://github.com/")
         self.assertEqual(rows[0]["狀態"], "未顯示")
 
-    def test_csv_preserves_unicode_and_multiline_text(self):
-        import csv
-
-        rows = parse_windows(
-            "<section><h2>Create your first project</h2><p>測試,內容</p><p>下一段</p></section>",
-            "https://github.com/",
-        )
+    def test_csv_preserves_unicode(self):
+        rows = parse_dashboard("<aside><h2>Top repositories</h2><a href='/測試/專案'>測試/專案</a></aside>", "https://github.com/")
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "result.csv"
             save_csv(path, rows, FIELDS)
