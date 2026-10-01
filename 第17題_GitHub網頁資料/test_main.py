@@ -4,10 +4,51 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from main import FIELDS, parse_dashboard, save_csv
+from main import FIELDS, login_complete, parse_dashboard, save_csv
+
+
+class FakeBrowser:
+    def __init__(self, *, url="https://github.com/login", meta_content="", logged_in=None):
+        self.current_url = url
+        self.meta_content = meta_content
+        self.logged_in = logged_in
+
+    def find_elements(self, by, selector):
+        if selector == "meta[name='user-login']" and self.meta_content is not None:
+            return [FakeElement(self.meta_content)]
+        return []
+
+    def get_cookie(self, name):
+        if name == "logged_in" and self.logged_in is not None:
+            return {"value": self.logged_in}
+        return None
+
+
+class FakeElement:
+    def __init__(self, content):
+        self.content = content
+
+    def get_attribute(self, name):
+        return self.content if name == "content" else None
+
+    def is_displayed(self):
+        return True
+
+    @property
+    def text(self):
+        return ""
 
 
 class DashboardParsingTests(unittest.TestCase):
+    def test_login_cookie_completes_login_when_dashboard_lacks_meta_tag(self):
+        """GitHub can omit meta[user-login] from a rendered dashboard."""
+        browser = FakeBrowser(url="https://github.com/", meta_content=None, logged_in="yes")
+        self.assertTrue(login_complete(browser))
+
+    def test_logged_out_homepage_does_not_complete_login(self):
+        browser = FakeBrowser(url="https://github.com/", meta_content=None, logged_in=None)
+        self.assertFalse(login_complete(browser))
+
     def test_extracts_left_repositories_and_middle_feed(self):
         html = """
         <aside><h2>Top repositories</h2>

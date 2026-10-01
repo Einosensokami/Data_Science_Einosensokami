@@ -4,6 +4,7 @@ from __future__ import annotations
 import csv
 import os
 import re
+import time
 from pathlib import Path
 from urllib.parse import urljoin
 
@@ -95,6 +96,15 @@ def parse_dashboard(html: str, page_url: str) -> list[dict[str, str]]:
     return [*repository_rows(soup, page_url), *feed_rows(soup, page_url)]
 
 
+def login_complete(browser: webdriver.Chrome) -> bool:
+    """判斷登入是否完成，不只依賴 GitHub 的頁面 meta 標記。"""
+    identity = browser.find_elements(By.CSS_SELECTOR, "meta[name='user-login']")
+    if identity and identity[0].get_attribute("content"):
+        return True
+    logged_in = browser.get_cookie("logged_in")
+    return bool(logged_in and logged_in.get("value") == "yes")
+
+
 def login(driver: webdriver.Chrome, username: str, password: str) -> None:
     driver.get("https://github.com/login")
     wait = WebDriverWait(driver, WAIT_SECONDS)
@@ -102,14 +112,18 @@ def login(driver: webdriver.Chrome, username: str, password: str) -> None:
     driver.find_element(By.ID, "password").send_keys(password)
     wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='commit']"))).click()
     print("已送出登入資料；若需要二階段或裝置驗證，請在瀏覽器內完成（最多等待 5 分鐘）。")
+    started_at, last_notice_at = time.monotonic(), 0.0
+
     def logged_in(browser: webdriver.Chrome) -> bool:
-        identity = browser.find_elements(By.CSS_SELECTOR, "meta[name='user-login']")
-        if identity and identity[0].get_attribute("content"):
-            return True
         for error in browser.find_elements(By.CSS_SELECTOR, ".flash-error"):
             if error.is_displayed() and error.text.strip():
                 raise RuntimeError(f"GitHub 登入失敗：{error.text.strip()}")
-        return False
+        nonlocal last_notice_at
+        elapsed = time.monotonic() - started_at
+        if elapsed - last_notice_at >= 30:
+            print(f"仍在等待 GitHub 完成登入或驗證（已等待 {int(elapsed)} 秒）。")
+            last_notice_at = elapsed
+        return login_complete(browser)
     try:
         WebDriverWait(driver, LOGIN_WAIT_SECONDS).until(logged_in)
     except TimeoutException as exc:
