@@ -18,6 +18,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 OUTPUT_DIR = Path(__file__).resolve().parent
 WAIT_SECONDS, LOGIN_WAIT_SECONDS = 30, 300
+# GitHub dashboard 會在主畫面顯示後再載入部分動態內容；稍候再截圖可避免截到半載入畫面。
+SCREENSHOT_SETTLE_SECONDS = 5
 FIELDS = ["區域", "項目", "內容", "連結", "頁面網址", "狀態"]
 REPOSITORY_URL = re.compile(r"^/[^/]+/[^/]+/?$")
 
@@ -147,6 +149,8 @@ def scrape_dashboard(driver: webdriver.Chrome) -> list[dict[str, str]]:
     except TimeoutException:
         pass
     rows = parse_dashboard(driver.page_source, driver.current_url)
+    print(f"Dashboard 已載入，等待 {SCREENSHOT_SETTLE_SECONDS} 秒後再截圖。")
+    time.sleep(SCREENSHOT_SETTLE_SECONDS)
     if not driver.save_screenshot(str(OUTPUT_DIR / "github_dashboard.png")):
         raise RuntimeError("無法儲存登入後首頁截圖。")
     return rows
