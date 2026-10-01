@@ -17,7 +17,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 URL = "https://www.ptt.cc/bbs/Gossiping/index.html"
 DIRECTORY = Path(__file__).resolve().parent
 ARTICLE_SELECTOR = ".r-list-container .r-ent"
-AGE_BUTTON = 'button[name="yes"]'
 FIELDS = ["網址", "標題", "作者"]
 
 
@@ -53,14 +52,10 @@ def scrape(headless: bool = False) -> tuple[str, list[dict[str, str]]]:
     try:
         driver.set_page_load_timeout(60)
         wait = WebDriverWait(driver, 30)
+        # Selenium 必須先造訪同網域，才能設定 PTT 的 Cookie。
         driver.get(URL)
-        wait.until(
-            lambda browser: browser.find_elements(By.CSS_SELECTOR, AGE_BUTTON)
-            or browser.find_elements(By.CSS_SELECTOR, ARTICLE_SELECTOR)
-        )
-        if driver.find_elements(By.CSS_SELECTOR, AGE_BUTTON):
-            # 實際點選成年確認，讓網站設定 over18=1 Cookie 並返回文章列表。
-            wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, AGE_BUTTON))).click()
+        driver.add_cookie({"name": "over18", "value": "1", "path": "/"})
+        driver.get(URL)
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ARTICLE_SELECTOR)))
         cookie = driver.get_cookie("over18")
         if not cookie or cookie["value"] != "1":

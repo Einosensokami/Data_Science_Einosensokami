@@ -20,7 +20,7 @@ python -m pip install -r requirements.txt
 6. `第6題_NBA球隊運動員`：CLE、HOU、GSW 的 2023–24 球季球員資料，輸出 `players.csv`
 7. `第8題_近期上映強片`：開眼電影網近期上映推薦，輸出 `movies.csv`
 8. `第9題_Google新聞`：Selenium 抓取 Google 新聞首頁各分類標題，輸出 `google_news.csv` 與 `google_news.txt`
-9. `第10題_PTT八卦板`：Selenium 點選成年確認，列出網頁 title 與文章列表，輸出 `gossiping.csv` 與 `gossiping.txt`
+9. `第10題_PTT八卦板`：Selenium 設定 `over18=1` Cookie，列出網頁 title 與文章列表，輸出 `gossiping.csv` 與 `gossiping.txt`
 10. `第11題_NBA商品資料`：Selenium 操作商品分頁，逐頁輸出 `NBA_Products1.csv` 至 `NBA_ProductsN.csv`
 11. `第12題_Steam遊戲推薦`：Selenium 操作 Google 搜尋「Steam 遊戲推薦」，輸出 `steam_games.csv`
 12. `第13題_momo搜尋頁`：Selenium 自動在 momo 搜尋「nba」，輸出 `NBA_test.html`
@@ -125,7 +125,7 @@ python "第9題_Google新聞/main.py"
 
 ## 第 10 題：PTT Gossiping
 
-使用 Selenium 開啟 [PTT 八卦板](https://www.ptt.cc/bbs/Gossiping/index.html)，點選「我同意，我已年滿十八歲」的進入按鈕，並確認網站已設定 `over18=1` Cookie。進入後列印實際網頁 title，以及本頁每篇文章的網址、標題、作者。
+使用 Selenium 開啟 [PTT 八卦板](https://www.ptt.cc/bbs/Gossiping/index.html)，直接設定 `over18=1` Cookie 後重新載入頁面，以跳過「我同意，我已年滿十八歲」的點擊。進入後列印實際網頁 title，以及本頁每篇文章的網址、標題、作者。
 
 ```powershell
 python "第10題_PTT八卦板/main.py"
